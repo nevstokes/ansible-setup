@@ -1,0 +1,19 @@
+---
+
+- name: Add useful apps
+  apt: pkg="{{ item }}" state=latest update_cache=yes
+  with_items:
+    - axel
+    - caffeine
+    - htop
+    - xclip
+
+- name: Remove useless apps
+  apt: pkg="{{ item }}" state=absent
+  with_items:
+    - aisleriot
+    - gnome-mahjongg
+    - gnome-mines
+    - gnome-sudoko
+    - rhythmbox
+    - shotwell

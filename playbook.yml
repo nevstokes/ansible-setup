@@ -8,7 +8,11 @@
     # - { role: zsh, become: true }
     # - { role: dotfiles, become: true }
     # - { role: projects-installer }
+
+    - { role: setup, become: true }
+    - { role: fonts, become: true }
     - { role: docker, become: true }
+    # - { role: slack, become: true }
     - { role: aws-cli }
     # - { role: keybase }
 
