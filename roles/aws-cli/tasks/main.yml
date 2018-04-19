@@ -1,8 +1,6 @@
 - name: Installing PIP
   apt:
     name: python-pip
-    update_cache: yes
-  become: yes
 
 - name: Installing AWS CLI
   pip:
