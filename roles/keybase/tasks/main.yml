@@ -1,15 +1,9 @@
----
-
-- name: Add keybase repository
+- name: Adding keybase repository
   apt:
     deb: https://prerelease.keybase.io/keybase_amd64.deb
-  become: yes
 
-- name: Install
-  apt: pkg="{{ item }}" state=latest update_cache=yes
-  with_items:
-    - keybase
-  become: yes
+- name: Installing
+  apt: pkg=keybase state=latest
 
-- name: Run keybase
+- name: Running keybase
   command: run_keybase
