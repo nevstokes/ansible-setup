@@ -1,19 +1,37 @@
----
+- apt_repository:
+    repo: ppa:aacebedo/fasd
 
-- name: Add useful apps
-  apt: pkg="{{ item }}" state=latest update_cache=yes
+- apt:
+    deb: https://github.com/jhawthorn/fzy/releases/download/0.9/fzy_0.9-1_amd64.deb
+
+- name: Adding useful stuff
+  apt: pkg="{{ item }}" state=latest
   with_items:
     - axel
     - caffeine
+    - chromium-browser
+    - fasd
+    - fzy
     - htop
-    - xclip
+    - jq
+    - lnav
+    - silversearcher-ag
+    - tig
+    - tlp
+    - tlp-rdw
+    - tmux
+    - tree
+    - vim
+    - yank
 
-- name: Remove useless apps
+- name: Removing useless stuff
   apt: pkg="{{ item }}" state=absent
   with_items:
     - aisleriot
+    - apache2
     - gnome-mahjongg
     - gnome-mines
     - gnome-sudoko
     - rhythmbox
     - shotwell
+    - thunderbird
