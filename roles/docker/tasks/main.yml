@@ -1,24 +1,39 @@
----
-
 - name: Installing apt-key
-  apt_key: id="0EBFCD88" url=https://download.docker.com/linux/ubuntu/gpg state=present
+  apt_key:
+    id: 0EBFCD88
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
 
-- name: Add deb repository
-  apt_repository: repo='deb https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable' state=present
+- name: Adding deb repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+    state: present
 
-- name: Install
-  apt: pkg="{{ item }}" state=latest update_cache=yes
-  with_items:
-    - docker-ce
+- name: Installing Docker
+  apt:
+    pkg: docker-ce
+    state: latest
 
-- name: Create Docker group
-  group: name=docker state=present
+- name: Creating Docker group
+  group:
+    name: docker
+    state: present
 
-- name: Add current user to Docker group
-  user: name="{{ ansible_env.USER }}" groups=docker append=yes
+- name: Adding current user to Docker group
+  user:
+    name: {{ ansible_env.USER }}
+    groups: docker
+    append: yes
 
-- name: "Ensure Docker is {{ docker.start | ternary('started','stopped') }}"
-  service: name=docker state={{ docker.start | ternary('restarted','stopped') }} enabled={{ docker.service_enabled }}
+- name: "Ensuring Docker is {{ docker.start | ternary('started','stopped') }}"
+  service:
+    name: docker
+    state: {{ docker.start | ternary('restarted','stopped') }}
+    enabled: {{ docker.service_enabled }}
 
-- name: Install docker-compose
-  get_url: url="https://github.com/docker/compose/releases/download/1.20.0/docker-compose-Linux-x86_64" dest=/usr/local/bin/docker-compose force=no mode=0755
+- name: Installing Docker Compose
+  get_url:
+    url: https://github.com/docker/compose/releases/download/{{ docker-compose.version }}/docker-compose-Linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    force: no
+    mode: 0755
