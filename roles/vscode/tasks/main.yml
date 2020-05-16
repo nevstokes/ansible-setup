@@ -1,0 +1,3 @@
+- name: Add deb
+  apt:
+    deb: "https://update.code.visualstudio.com/latest/linux-deb-x64/stable"
