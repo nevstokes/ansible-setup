@@ -1,39 +1,48 @@
-- name: Installing apt-key
+- name: Install key
   apt_key:
     id: 0EBFCD88
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
 
-- name: Adding deb repository
+- name: Add repository
   apt_repository:
     repo: deb https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
     state: present
 
-- name: Installing Docker
-  apt:
-    pkg: docker-ce
-    state: latest
+- name: Install CE
+  package:
+    name: docker-ce
+    state: present
 
-- name: Creating Docker group
+- name: Install Docker Compose
+  get_url:
+    url: "https://github.com/docker/compose/releases/download/{{ docker_compose.version }}/docker-compose-Linux-x86_64"
+    dest: /usr/local/bin/docker-compose
+    checksum: "{{ docker_compose.checksum }}"
+    mode: 0755
+
+- name: Create group
   group:
     name: docker
     state: present
 
-- name: Adding current user to Docker group
+- name: Add current user to group
   user:
-    name: {{ ansible_env.USER }}
-    groups: docker
+    name: "{{ ansible_env.USER }}"
+    groups:
+      - docker
     append: yes
 
-- name: "Ensuring Docker is {{ docker.start | ternary('started','stopped') }}"
+- name: Adding Credential Helper
+  unarchive:
+    creates: /usr/local/bin/docker-credential-secretservice
+    remote_src: yes
+    src: https://github.com/docker/docker-credential-helpers/releases/download/v{{ docker_credential_secretservice.version }}/docker-credential-secretservice-v{{ docker_credential_secretservice.version }}-amd64.tar.gz
+    dest: /usr/local/bin/
+    mode: 0755
+
+- name: "Ensure Docker is started"
   service:
     name: docker
-    state: {{ docker.start | ternary('restarted','stopped') }}
-    enabled: {{ docker.service_enabled }}
-
-- name: Installing Docker Compose
-  get_url:
-    url: https://github.com/docker/compose/releases/download/{{ docker-compose.version }}/docker-compose-Linux-x86_64
-    dest: /usr/local/bin/docker-compose
-    force: no
-    mode: 0755
+    state: restarted
+    enabled: true
